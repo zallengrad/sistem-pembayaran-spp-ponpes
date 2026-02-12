@@ -310,130 +310,132 @@ export default function DataSantriPage() {
 
                         <form onSubmit={handleSubmit}>
                             <div className={styles.modalBody}>
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="id" className={styles.label}>NIS (Nomor Induk Santri)</label>
-                                    <input
-                                        type="text"
-                                        id="id"
-                                        name="id"
-                                        value={formData.id}
-                                        className={styles.input}
-                                        placeholder="Otomatis terisi"
-                                        readOnly
-                                        style={{ backgroundColor: '#F3F4F6', cursor: 'not-allowed' }}
-                                    />
-                                    {!isEditMode && (
-                                        <span className={styles.inputHint}>NIS akan otomatis digenerate setelah memilih jenis kelamin</span>
-                                    )}
-                                </div>
+                                <div className={styles.formGrid}>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="id" className={styles.label}>NIS (Nomor Induk Santri)</label>
+                                        <input
+                                            type="text"
+                                            id="id"
+                                            name="id"
+                                            value={formData.id || ""}
+                                            className={styles.input}
+                                            placeholder="Otomatis terisi"
+                                            readOnly
+                                            style={{ backgroundColor: '#F3F4F6', cursor: 'not-allowed' }}
+                                        />
+                                        {!isEditMode && (
+                                            <span className={styles.inputHint}>NIS akan otomatis digenerate setelah memilih jenis kelamin</span>
+                                        )}
+                                    </div>
 
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="name" className={styles.label}>Nama Lengkap <span className={styles.required}>*</span></label>
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        name="name"
-                                        value={formData.name}
-                                        onChange={handleInputChange}
-                                        className={styles.input}
-                                        placeholder="Masukkan nama santri"
-                                        required
-                                    />
-                                </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="name" className={styles.label}>Nama Lengkap <span className={styles.required}>*</span></label>
+                                        <input
+                                            type="text"
+                                            id="name"
+                                            name="name"
+                                            value={formData.name}
+                                            onChange={handleInputChange}
+                                            className={styles.input}
+                                            placeholder="Masukkan nama santri"
+                                            required
+                                        />
+                                    </div>
 
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="jenisKelamin" className={styles.label}>Jenis Kelamin <span className={styles.required}>*</span></label>
-                                    <select
-                                        id="jenisKelamin"
-                                        name="jenisKelamin"
-                                        value={formData.jenisKelamin}
-                                        onChange={handleInputChange}
-                                        className={styles.input}
-                                        required
-                                        disabled={isEditMode}
-                                        style={isEditMode ? { backgroundColor: '#F3F4F6', cursor: 'not-allowed' } : {}}
-                                    >
-                                        <option value="" disabled>Pilih Jenis Kelamin</option>
-                                        <option value="L">Laki-laki (01)</option>
-                                        <option value="P">Perempuan (02)</option>
-                                    </select>
-                                </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="jenisKelamin" className={styles.label}>Jenis Kelamin <span className={styles.required}>*</span></label>
+                                        <select
+                                            id="jenisKelamin"
+                                            name="jenisKelamin"
+                                            value={formData.jenisKelamin}
+                                            onChange={handleInputChange}
+                                            className={styles.input}
+                                            required
+                                            disabled={isEditMode}
+                                            style={isEditMode ? { backgroundColor: '#F3F4F6', cursor: 'not-allowed' } : {}}
+                                        >
+                                            <option value="" disabled>Pilih Jenis Kelamin</option>
+                                            <option value="L">Laki-laki (01)</option>
+                                            <option value="P">Perempuan (02)</option>
+                                        </select>
+                                    </div>
 
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="tanggalLahir" className={styles.label}>Tanggal Lahir <span className={styles.required}>*</span></label>
-                                    <input
-                                        type="date"
-                                        id="tanggalLahir"
-                                        name="tanggalLahir"
-                                        value={formData.tanggalLahir}
-                                        onChange={handleInputChange}
-                                        className={styles.input}
-                                        required
-                                    />
-                                </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="tanggalLahir" className={styles.label}>Tanggal Lahir <span className={styles.required}>*</span></label>
+                                        <input
+                                            type="date"
+                                            id="tanggalLahir"
+                                            name="tanggalLahir"
+                                            value={formData.tanggalLahir}
+                                            onChange={handleInputChange}
+                                            className={styles.input}
+                                            required
+                                        />
+                                    </div>
 
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="password" className={styles.label}>Password (Login Santri)</label>
-                                    <input
-                                        type="text"
-                                        id="password"
-                                        name="password"
-                                        value={formData.password}
-                                        className={styles.input}
-                                        placeholder="Otomatis dari tanggal lahir"
-                                        readOnly
-                                        style={{ backgroundColor: '#F3F4F6', cursor: 'not-allowed', fontFamily: 'monospace', letterSpacing: '2px' }}
-                                    />
-                                    <span className={styles.inputHint}>Format: DDMMYY (contoh: tgl lahir 5 Feb 2003 → 050203)</span>
-                                </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="password" className={styles.label}>Password (Login Santri)</label>
+                                        <input
+                                            type="text"
+                                            id="password"
+                                            name="password"
+                                            value={formData.password}
+                                            className={styles.input}
+                                            placeholder="Otomatis dari tanggal lahir"
+                                            readOnly
+                                            style={{ backgroundColor: '#F3F4F6', cursor: 'not-allowed', fontFamily: 'monospace', letterSpacing: '2px' }}
+                                        />
+                                        <span className={styles.inputHint}>Format: DDMMYY (contoh: 050203)</span>
+                                    </div>
 
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="kelas" className={styles.label}>Kelas <span className={styles.required}>*</span></label>
-                                    <select
-                                        id="kelas"
-                                        name="kelas"
-                                        value={formData.kelas}
-                                        onChange={handleInputChange}
-                                        className={styles.input}
-                                        required
-                                    >
-                                        <option value="" disabled>Pilih Kelas</option>
-                                        <option value="Ibtida'">Ibtida&apos;</option>
-                                        <option value="Jurumiyah">Jurumiyah</option>
-                                        <option value="Imrithi">Imrithi</option>
-                                        <option value="Alfiyah 1">Alfiyah 1</option>
-                                        <option value="Alfiyah 2">Alfiyah 2</option>
-                                        <option value="Musyawirin">Musyawirin</option>
-                                    </select>
-                                </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="kelas" className={styles.label}>Kelas <span className={styles.required}>*</span></label>
+                                        <select
+                                            id="kelas"
+                                            name="kelas"
+                                            value={formData.kelas}
+                                            onChange={handleInputChange}
+                                            className={styles.input}
+                                            required
+                                        >
+                                            <option value="" disabled>Pilih Kelas</option>
+                                            <option value="Ibtida'">Ibtida&apos;</option>
+                                            <option value="Jurumiyah">Jurumiyah</option>
+                                            <option value="Imrithi">Imrithi</option>
+                                            <option value="Alfiyah 1">Alfiyah 1</option>
+                                            <option value="Alfiyah 2">Alfiyah 2</option>
+                                            <option value="Musyawirin">Musyawirin</option>
+                                        </select>
+                                    </div>
 
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="alamat" className={styles.label}>Alamat <span className={styles.required}>*</span></label>
-                                    <input
-                                        type="text"
-                                        id="alamat"
-                                        name="alamat"
-                                        value={formData.alamat}
-                                        onChange={handleInputChange}
-                                        className={styles.input}
-                                        placeholder="Masukkan alamat lengkap"
-                                        required
-                                    />
-                                </div>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="alamat" className={styles.label}>Alamat <span className={styles.required}>*</span></label>
+                                        <input
+                                            type="text"
+                                            id="alamat"
+                                            name="alamat"
+                                            value={formData.alamat}
+                                            onChange={handleInputChange}
+                                            className={styles.input}
+                                            placeholder="Masukkan alamat lengkap"
+                                            required
+                                        />
+                                    </div>
 
-                                <div className={styles.formGroup}>
-                                    <label htmlFor="namaWali" className={styles.label}>Nama Wali <span className={styles.required}>*</span></label>
-                                    <input
-                                        type="text"
-                                        id="namaWali"
-                                        name="namaWali"
-                                        value={formData.namaWali}
-                                        onChange={handleInputChange}
-                                        className={styles.input}
-                                        placeholder="Masukkan nama wali santri"
-                                        required
-                                    />
-                                    <span className={styles.inputHint}>Nama wali akan menjadi username login wali santri</span>
+                                    <div className={styles.formGroup}>
+                                        <label htmlFor="namaWali" className={styles.label}>Nama Wali <span className={styles.required}>*</span></label>
+                                        <input
+                                            type="text"
+                                            id="namaWali"
+                                            name="namaWali"
+                                            value={formData.namaWali}
+                                            onChange={handleInputChange}
+                                            className={styles.input}
+                                            placeholder="Masukkan nama wali santri"
+                                            required
+                                        />
+                                        <span className={styles.inputHint}>Username login wali santri</span>
+                                    </div>
                                 </div>
                             </div>
 
