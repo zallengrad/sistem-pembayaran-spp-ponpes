@@ -1,0 +1,658 @@
+/* Dashboard Page Styles */
+
+.pageContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+}
+
+/* --- Stats Cards --- */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.statCard {
+    background: #fff;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.statHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.statValue {
+    font-size: 24px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.statLabel {
+    font-size: 14px;
+    color: #6B7280;
+    font-weight: 500;
+}
+
+.progressBarContainer {
+    display: flex;
+    align-items: center;
+    /* Center vertically */
+    justify-content: space-between;
+    background-color: #0D9A4E;
+    border-radius: 4px;
+    padding: 8px 16px;
+    /* Padding for text inside bar */
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    height: 40px;
+}
+
+/* Make progress bar look like the design: full green block with text inside */
+.progressLabel {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* --- Table Section --- */
+.tableSection {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    padding: 24px;
+}
+
+/* Filter Bar */
+.filterBar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #E5E7EB;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.filterRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.filterItem {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.filterLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6B7280;
+    text-transform: uppercase;
+}
+
+.filterSelect {
+    padding: 8px 32px 8px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #111827;
+    background-color: #F9FAFB;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s;
+    appearance: auto;
+    min-width: 160px;
+}
+
+.filterSelect:focus {
+    border-color: #0D9A4E;
+    box-shadow: 0 0 0 3px rgba(13, 154, 78, 0.1);
+}
+
+.filterInfo {
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.filterRight {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.rowsPerPage {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rowsLabel {
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.rowsSelect {
+    padding: 6px 10px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #111827;
+    background-color: #F9FAFB;
+    outline: none;
+    cursor: pointer;
+}
+
+.tableHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.controlsLeft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 14px;
+    color: #4B5563;
+}
+
+.entriesSelect {
+    padding: 6px 12px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    background-color: #F3F4F6;
+    color: #374151;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.searchWrapper {
+    position: relative;
+    width: 250px;
+}
+
+.tableSearch {
+    width: 100%;
+    padding: 8px 12px 8px 36px;
+    border: 1px solid #E5E7EB;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+.searchIconSmall {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9CA3AF;
+    width: 16px;
+    height: 16px;
+}
+
+.controlsRight {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.addSantriButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #374151;
+    transition: color 0.2s;
+}
+
+.addSantriButton:hover {
+    color: #0D9A4E;
+}
+
+.recentHistory {
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+}
+
+/* Table Styles */
+.tableContainer {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th {
+    text-align: left;
+    padding: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.table td {
+    padding: 16px;
+    font-size: 14px;
+    color: #4B5563;
+    border-bottom: 1px solid #F3F4F6;
+}
+
+/* Row hover effect */
+.table tr:hover td {
+    background-color: #FAFAFA;
+}
+
+.table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Status Badges */
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badgeSuccess {
+    background-color: #DCFCE7;
+    /* Light green */
+    color: #166534;
+    /* Dark green */
+}
+
+.badgeWarning {
+    background-color: #FFEDD5;
+    /* Light orange */
+    color: #9A3412;
+    /* Dark orange */
+}
+
+/* Action Buttons */
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.editBtn {
+    color: #6366F1;
+    cursor: pointer;
+}
+
+.deleteBtn {
+    color: #EF4444;
+    cursor: pointer;
+}
+
+/* --- New Payment & Table Styles --- */
+.santriName {
+    font-weight: 500;
+    color: #111827;
+}
+
+.kelasBadge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    background-color: #EEF2FF;
+    color: #4338CA;
+}
+
+.dibayarkanCell {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dibayarkanAmount {
+    font-weight: 600;
+    color: #0D9A4E;
+}
+
+.sisaAmount {
+    font-size: 11px;
+    color: #9CA3AF;
+}
+
+.badgeCicilan {
+    background-color: #DBEAFE;
+    color: #1D4ED8;
+}
+
+.paymentBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background-color: #0D9A4E;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.paymentBtn:hover {
+    background-color: #05853e;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(13, 154, 78, 0.3);
+}
+
+.paymentBtn:active {
+    transform: translateY(0);
+}
+
+.paidIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #0D9A4E;
+}
+
+/* Payment Modal Info */
+.paymentInfo {
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.paymentInfoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.paymentInfoHighlight {
+    padding-top: 10px;
+    border-top: 1px dashed #D1D5DB;
+    margin-top: 4px;
+}
+
+.paymentInfoLabel {
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.paymentInfoValue {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.currencyInputWrapper {
+    position: relative;
+    width: 100%;
+}
+
+.currencyPrefix {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    font-weight: 500;
+    color: #6B7280;
+}
+
+.formInputCurrency {
+    padding-left: 36px;
+}
+
+.inputHint {
+    font-size: 12px;
+    color: #9CA3AF;
+    margin-top: 4px;
+    display: block;
+}
+
+.btnSave {
+    padding: 8px 16px;
+    background-color: #0D9A4E;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btnSave:hover {
+    background-color: #05853e;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid #F3F4F6;
+}
+
+.paginationInfo {
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.paginationButtons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.pageBtn {
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #F9FAFB;
+    border: 1px solid #E5E7EB;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pageBtn:hover {
+    background-color: #E6F5ED;
+    border-color: #0D9A4E;
+    color: #0D9A4E;
+}
+
+.pageBtnActive {
+    background-color: #0D9A4E;
+    color: #fff;
+    border-color: #0D9A4E;
+}
+
+.pageBtnActive:hover {
+    background-color: #05853e;
+    color: #fff;
+}
+
+.pageBtnNav {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #374151;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pageBtnNav:hover:not(:disabled) {
+    background-color: #F3F4F6;
+    border-color: #D1D5DB;
+}
+
+.pageBtnDisabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+/* --- Modal Styles --- */
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    backdrop-filter: blur(2px);
+}
+
+.modalContent {
+    background: #fff;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalHeader {
+    padding: 20px 24px;
+    border-bottom: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modalTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    color: #6B7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.closeButton:hover {
+    background-color: #F3F4F6;
+    color: #111827;
+}
+
+.modalBody {
+    padding: 24px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formLabel {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.formInput {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #111827;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.formInput:focus {
+    border-color: #0D9A4E;
+    box-shadow: 0 0 0 3px rgba(13, 154, 78, 0.1);
+}
+
+.modalFooter {
+    padding: 16px 24px;
+    background-color: #F9FAFB;
+    border-top: 1px solid #E5E7EB;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btnCancel {
+    padding: 8px 16px;
+    background-color: #fff;
+    border: 1px solid #D1D5DB;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+}
+
+.btnCancel:hover {
+    background-color: #F3F4F6;
+}
