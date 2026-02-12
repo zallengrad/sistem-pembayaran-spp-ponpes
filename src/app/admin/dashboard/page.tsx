@@ -28,9 +28,9 @@ export default function DashboardPage() {
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(50);
 
-    // Filter states — default to current month & year
-    const [filterBulan, setFilterBulan] = useState<string>(String(new Date().getMonth() + 1));
-    const [filterTahun, setFilterTahun] = useState<string>(String(new Date().getFullYear()));
+    // Filter states — default to 'all' to show available data
+    const [filterBulan, setFilterBulan] = useState<string>("all");
+    const [filterTahun, setFilterTahun] = useState<string>("all");
     const [filterKelas, setFilterKelas] = useState<string>("all");
     const [filterGender, setFilterGender] = useState<string>("all");
 
@@ -45,7 +45,6 @@ export default function DashboardPage() {
                 .from('pembayaran')
                 .select(`
                     id,
-                    total_tagihan,
                     dibayarkan,
                     santri (
                         id,
@@ -56,7 +55,8 @@ export default function DashboardPage() {
                     ),
                     tagihan_batch (
                         bulan,
-                        tahun
+                        tahun,
+                        total
                     )
                 `);
 
@@ -75,7 +75,7 @@ export default function DashboardPage() {
                     kelas: item.santri.kelas,
                     bulan: item.tagihan_batch.bulan,
                     tahun: item.tagihan_batch.tahun,
-                    totalTagihan: item.total_tagihan,
+                    totalTagihan: item.tagihan_batch.total,
                     dibayarkan: item.dibayarkan
                 }));
                 // Sort by latest year/month/name
@@ -175,7 +175,7 @@ export default function DashboardPage() {
             // Update Supabase
             const { error } = await supabase
                 .from('pembayaran')
-                .update({ dibayarkan: newDibayarkan, updated_at: new Date().toISOString() })
+                .update({ dibayarkan: newDibayarkan })
                 .eq('id', selectedSantri.id);
 
             if (error) throw error;
@@ -352,62 +352,70 @@ export default function DashboardPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {paginatedList.map((item) => {
-                                const status = getStatus(item);
-                                const sisa = item.totalTagihan - item.dibayarkan;
-                                return (
-                                    <tr key={item.id}>
-                                        <td>{item.nis}</td>
-                                        <td>
-                                            <span className={styles.santriName}>{item.name}</span>
-                                        </td>
-                                        <td>
-                                            <span className={styles.kelasBadge}>{item.kelas}</span>
-                                        </td>
-                                        <td>{getMonthName(item.bulan)} {item.tahun}</td>
-                                        <td>{formatCurrency(item.totalTagihan)}</td>
-                                        <td>
-                                            <div className={styles.dibayarkanCell}>
-                                                <span className={styles.dibayarkanAmount}>
-                                                    {formatCurrency(item.dibayarkan)}
+                            {paginatedList.length > 0 ? (
+                                paginatedList.map((item) => {
+                                    const status = getStatus(item);
+                                    const sisa = item.totalTagihan - item.dibayarkan;
+                                    return (
+                                        <tr key={item.id}>
+                                            <td>{item.nis}</td>
+                                            <td>
+                                                <span className={styles.santriName}>{item.name}</span>
+                                            </td>
+                                            <td>
+                                                <span className={styles.kelasBadge}>{item.kelas}</span>
+                                            </td>
+                                            <td>{getMonthName(item.bulan)} {item.tahun}</td>
+                                            <td>{formatCurrency(item.totalTagihan)}</td>
+                                            <td>
+                                                <div className={styles.dibayarkanCell}>
+                                                    <span className={styles.dibayarkanAmount}>
+                                                        {formatCurrency(item.dibayarkan)}
+                                                    </span>
+                                                    {sisa > 0 && (
+                                                        <span className={styles.sisaAmount}>
+                                                            Sisa: {formatCurrency(sisa)}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span className={`${styles.badge} ${getStatusStyle(status)}`}>
+                                                    {status}
                                                 </span>
-                                                {sisa > 0 && (
-                                                    <span className={styles.sisaAmount}>
-                                                        Sisa: {formatCurrency(sisa)}
+                                            </td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                {status !== "Lunas" ? (
+                                                    <button
+                                                        className={styles.paymentBtn}
+                                                        onClick={() => handleOpenPaymentModal(item)}
+                                                        title={`Input pembayaran untuk ${item.name}`}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <rect x="2" y="5" width="20" height="14" rx="2" />
+                                                            <line x1="2" y1="10" x2="22" y2="10" />
+                                                        </svg>
+                                                        <span>Bayar</span>
+                                                    </button>
+                                                ) : (
+                                                    <span className={styles.paidIcon}>
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                                        </svg>
                                                     </span>
                                                 )}
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <span className={`${styles.badge} ${getStatusStyle(status)}`}>
-                                                {status}
-                                            </span>
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            {status !== "Lunas" ? (
-                                                <button
-                                                    className={styles.paymentBtn}
-                                                    onClick={() => handleOpenPaymentModal(item)}
-                                                    title={`Input pembayaran untuk ${item.name}`}
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                        <rect x="2" y="5" width="20" height="14" rx="2" />
-                                                        <line x1="2" y1="10" x2="22" y2="10" />
-                                                    </svg>
-                                                    <span>Bayar</span>
-                                                </button>
-                                            ) : (
-                                                <span className={styles.paidIcon}>
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                                                    </svg>
-                                                </span>
-                                            )}
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                            </td>
+                                        </tr>
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan={8} style={{ textAlign: "center", padding: "2rem", color: "#6B7280" }}>
+                                        Belum ada data pembayaran yang sesuai filter.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

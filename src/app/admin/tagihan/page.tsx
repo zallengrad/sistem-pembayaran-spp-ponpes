@@ -6,8 +6,8 @@ import styles from "./tagihan.module.css";
 
 interface TagihanBatch {
     id: number;
-    month: number;
-    year: number;
+    bulan: number;
+    tahun: number;
     spp: number;
     kebersihan: number;
     konsumsi: number;
@@ -43,8 +43,8 @@ export default function TagihanPage() {
         const { data, error } = await supabase
             .from('tagihan_batch')
             .select('*')
-            .order('year', { ascending: false })
-            .order('month', { ascending: false });
+            .order('tahun', { ascending: false })
+            .order('bulan', { ascending: false });
         
         if (error) console.error("Error fetching batches:", error);
         else setBatches(data || []);
@@ -52,12 +52,12 @@ export default function TagihanPage() {
     };
 
     // Get unique years from batches for the filter dropdown
-    const availableYears = [...new Set(batches.map((b) => b.year))].sort((a, b) => b - a);
+    const availableYears = [...new Set(batches.map((b) => b.tahun))].sort((a, b) => b - a);
 
     // Filter batches by selected year
     const filteredBatches = selectedYear === "all"
         ? batches
-        : batches.filter((b) => b.year === Number(selectedYear));
+        : batches.filter((b) => b.tahun === Number(selectedYear));
 
     // Calculate total automatically
     useEffect(() => {
@@ -94,13 +94,12 @@ export default function TagihanPage() {
         setIsSubmitting(true);
 
         const newBatchData = {
-            month: Number(formData.bulan),
-            year: Number(formData.tahun),
+            bulan: Number(formData.bulan),
+            tahun: Number(formData.tahun),
             spp: parseFloat(formData.spp) || 0,
             kebersihan: parseFloat(formData.kebersihan) || 0,
             konsumsi: parseFloat(formData.konsumsi) || 0,
             pembangunan: parseFloat(formData.pembangunan) || 0,
-            total: totalTagihan,
         };
 
         try {
@@ -108,12 +107,12 @@ export default function TagihanPage() {
             const { data: existing } = await supabase
                 .from('tagihan_batch')
                 .select('id')
-                .eq('month', newBatchData.month)
-                .eq('year', newBatchData.year)
+                .eq('bulan', newBatchData.bulan)
+                .eq('tahun', newBatchData.tahun)
                 .single();
 
             if (existing) {
-                alert(`Tagihan untuk ${getMonthName(newBatchData.month)} ${newBatchData.year} sudah ada!`);
+                alert(`Tagihan untuk ${getMonthName(newBatchData.bulan)} ${newBatchData.tahun} sudah ada!`);
                 setIsSubmitting(false);
                 return;
             }
@@ -141,8 +140,7 @@ export default function TagihanPage() {
                     santri_id: santri.id,
                     tagihan_batch_id: batchData.id,
                     total_tagihan: totalTagihan,
-                    dibayarkan: 0,
-                    status: 'Belum Lunas'
+                    dibayarkan: 0
                 }));
 
                 // Bulk Insert ke tabel pembayaran
@@ -153,7 +151,7 @@ export default function TagihanPage() {
                 if (paymentError) throw paymentError;
             }
 
-            alert(`Sukses! Tagihan bulan ${getMonthName(newBatchData.month)} ${newBatchData.year} berhasil dibuat untuk ${santriList?.length || 0} santri.`);
+            alert(`Sukses! Tagihan bulan ${getMonthName(newBatchData.bulan)} ${newBatchData.tahun} berhasil dibuat untuk ${santriList?.length || 0} santri.`);
             
             fetchBatches(); // Refresh list
             setIsModalOpen(false);
@@ -168,9 +166,9 @@ export default function TagihanPage() {
                 pembangunan: "",
             });
 
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
-            alert("Terjadi kesalahan saat menyimpan data.");
+            alert("Terjadi kesalahan: " + (err.message || "Gagal menyimpan data"));
         } finally {
             setIsSubmitting(false);
         }
@@ -237,8 +235,8 @@ export default function TagihanPage() {
                     <tbody>
                         {filteredBatches.map((batch) => (
                             <tr key={batch.id}>
-                                <td>{getMonthName(batch.month)}</td>
-                                <td>{batch.year}</td>
+                                <td>{getMonthName(batch.bulan)}</td>
+                                <td>{batch.tahun}</td>
                                 <td>{formatCurrency(batch.spp)}</td>
                                 <td>{formatCurrency(batch.kebersihan)}</td>
                                 <td>{formatCurrency(batch.konsumsi)}</td>

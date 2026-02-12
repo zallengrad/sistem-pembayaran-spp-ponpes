@@ -178,15 +178,54 @@ export default function DataSantriPage() {
                  return;
             }
 
-            const { error } = await supabase
+            const { data: newSantri, error } = await supabase
                 .from('santri')
-                .insert([dbData]);
+                .insert([dbData])
+                .select()
+                .single();
 
             if (error) {
                 alert("Gagal menambah data! (Cek apakah NIS sudah ada)");
                 console.error(error);
             } else {
-                alert("Data santri berhasil ditambahkan!");
+                // Auto-generate payments for existing batches of current year
+                try {
+                    const currentYear = new Date().getFullYear();
+                    // alert(`Debug: Checking batches for year ${currentYear}`); // Debug
+
+                    const { data: batches, error: batchError } = await supabase
+                        .from('tagihan_batch')
+                        .select('id, total')
+                        .eq('tahun', currentYear);
+
+                    if (batchError) {
+                        alert("Debug Error fetching batches: " + batchError.message);
+                    } else if (batches && batches.length > 0) {
+                         alert(`Debug: Ditemukan ${batches.length} tagihan batch untuk tahun ${currentYear}. Membuat pembayaran...`); 
+
+                         const paymentPayloads = batches.map((batch: any) => ({
+                             santri_id: newSantri.id,
+                             tagihan_batch_id: batch.id,
+                             total_tagihan: batch.total, 
+                             dibayarkan: 0
+                         }));
+                         
+                         const { error: paymentError } = await supabase.from('pembayaran').insert(paymentPayloads);
+                         if (paymentError) {
+                            alert("Debug Error creating payments: " + paymentError.message);
+                            console.error("Error creating payments:", paymentError);
+                         } else {
+                            alert("Debug: Pembayaran berhasil dibuat otomatis."); 
+                         }
+                    } else {
+                        alert(`Debug: TIDAK ada tagihan batch ditemukan untuk tahun ${currentYear}. Cek tabel tagihan_batch.`); 
+                    }
+                } catch (paymentErr: any) {
+                    console.error("Payment generation error:", paymentErr);
+                    alert("Debug Exception: " + paymentErr.message);
+                }
+
+                alert("Data santri berhasil ditambahkan! (Silakan cek tagihan)");
                 fetchSantri();
                 setIsModalOpen(false);
             }

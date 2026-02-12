@@ -58,11 +58,11 @@ export default function WaliPage() {
                     .from('pembayaran')
                     .select(`
                         id,
-                        total_tagihan,
                         dibayarkan,
                         tagihan_batch (
                             bulan,
-                            tahun
+                            tahun,
+                            total
                         )
                     `)
                     .eq('santri_id', santriId);
@@ -74,7 +74,7 @@ export default function WaliPage() {
                         id: item.id,
                         bulan: item.tagihan_batch.bulan,
                         tahun: item.tagihan_batch.tahun,
-                        totalTagihan: item.total_tagihan,
+                        totalTagihan: item.tagihan_batch.total,
                         dibayarkan: item.dibayarkan
                     }));
                     
