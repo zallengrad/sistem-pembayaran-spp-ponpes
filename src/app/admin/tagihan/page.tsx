@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabase";
 import styles from "./tagihan.module.css";
 
 interface TagihanBatch {
@@ -40,15 +39,20 @@ export default function TagihanPage() {
 
     const fetchBatches = async () => {
         setLoading(true);
-        const { data, error } = await supabase
-            .from('tagihan_batch')
-            .select('*')
-            .order('tahun', { ascending: false })
-            .order('bulan', { ascending: false });
-        
-        if (error) console.error("Error fetching batches:", error);
-        else setBatches(data || []);
-        setLoading(false);
+        try {
+            const response = await fetch('/api/tagihan');
+            const result = await response.json();
+            
+            if (result.success) {
+                setBatches(result.data || []);
+            } else {
+                console.error("Error fetching batches:", result.error);
+            }
+        } catch (error) {
+            console.error("Error fetching batches:", error);
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Get unique years from batches for the filter dropdown
@@ -93,65 +97,31 @@ export default function TagihanPage() {
         e.preventDefault();
         setIsSubmitting(true);
 
-        const newBatchData = {
-            bulan: Number(formData.bulan),
-            tahun: Number(formData.tahun),
-            spp: parseFloat(formData.spp) || 0,
-            kebersihan: parseFloat(formData.kebersihan) || 0,
-            konsumsi: parseFloat(formData.konsumsi) || 0,
-            pembangunan: parseFloat(formData.pembangunan) || 0,
-        };
-
         try {
-            // 1. Cek apakah sudah ada tagihan untuk bulan & tahun ini
-            const { data: existing } = await supabase
-                .from('tagihan_batch')
-                .select('id')
-                .eq('bulan', newBatchData.bulan)
-                .eq('tahun', newBatchData.tahun)
-                .single();
+            const response = await fetch('/api/tagihan/batch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    bulan: Number(formData.bulan),
+                    tahun: Number(formData.tahun),
+                    spp: formData.spp,
+                    kebersihan: formData.kebersihan,
+                    konsumsi: formData.konsumsi,
+                    pembangunan: formData.pembangunan,
+                }),
+            });
 
-            if (existing) {
-                alert(`Tagihan untuk ${getMonthName(newBatchData.bulan)} ${newBatchData.tahun} sudah ada!`);
-                setIsSubmitting(false);
+            const result = await response.json();
+
+            if (!result.success) {
+                alert(result.error || 'Gagal membuat tagihan');
                 return;
             }
 
-            // 2. Insert Batch Tagihan Baru
-            const { data: batchData, error: batchError } = await supabase
-                .from('tagihan_batch')
-                .insert([newBatchData])
-                .select()
-                .single();
-
-            if (batchError || !batchData) throw batchError || new Error("Gagal membuat batch");
-
-            // 3. Generate Pembayaran untuk SEMUA Santri aktif
-            // Ambil semua ID santri
-            const { data: santriList, error: santriError } = await supabase
-                .from('santri')
-                .select('id');
-            
-            if (santriError) throw santriError;
-
-            if (santriList && santriList.length > 0) {
-                // Buat array data pembayaran
-                const pembayaranPayload = santriList.map((santri: { id: number }) => ({
-                    santri_id: santri.id,
-                    tagihan_batch_id: batchData.id,
-                    total_tagihan: totalTagihan,
-                    dibayarkan: 0
-                }));
-
-                // Bulk Insert ke tabel pembayaran
-                const { error: paymentError } = await supabase
-                    .from('pembayaran')
-                    .insert(pembayaranPayload);
-                
-                if (paymentError) throw paymentError;
-            }
-
-            alert(`Sukses! Tagihan bulan ${getMonthName(newBatchData.bulan)} ${newBatchData.tahun} berhasil dibuat untuk ${santriList?.length || 0} santri.`);
+            const { batch, santriCount } = result.data;
+            alert(result.message || `Sukses! Tagihan berhasil dibuat untuk ${santriCount} santri.`);
             
             fetchBatches(); // Refresh list
             setIsModalOpen(false);

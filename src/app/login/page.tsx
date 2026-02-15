@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
@@ -21,56 +20,36 @@ export default function LoginPage() {
         setLoading(true);
 
         try {
-            // 1. Cek Login Admin
-            const { data: adminData, error: adminError } = await supabase
-                .from('admin')
-                .select('*')
-                .eq('username', username)
-                .eq('password', password)
-                .single();
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
 
-            if (adminData) {
-                router.push("/admin/dashboard");
+            const result = await response.json();
+
+            if (!result.success) {
+                setError(result.error || 'Login gagal');
                 return;
             }
 
-            // 2. Cek Login Santri (NIS + Password)
-            const { data: santriData, error: santriError } = await supabase
-                .from('santri')
-                .select('*')
-                .eq('nis', username)
-                .eq('password', password)
-                .single();
+            // Store user data based on role
+            const { role, userId, redirectTo } = result.data;
 
-            if (santriData) {
-                // Simpan ID santri di localStorage/cookie jika perlu untuk session
-                localStorage.setItem('user_santri_id', santriData.id);
-                router.push("/user");
-                return;
+            if (role === 'santri') {
+                localStorage.setItem('user_santri_id', userId);
+            } else if (role === 'wali') {
+                localStorage.setItem('user_wali_santri_id', userId);
             }
 
-            // 3. Cek Login Wali (Nama Wali + Password Santri)
-            // Password wali = Password santri (tgl lahir). Username = Nama Wali.
-            // Kita cari santri yang nama_wali cocok DAN password santri cocok.
-            const { data: waliData, error: waliError } = await supabase
-                .from('santri')
-                .select('*')
-                .ilike('nama_wali', username) // Case insensitive untuk nama
-                .eq('password', password)
-                .single();
-
-            if (waliData) {
-                localStorage.setItem('user_wali_santri_id', waliData.id);
-                router.push("/wali");
-                return;
-            }
-
-            // Jika semua gagal
-            setError("Username atau password salah!");
+            // Redirect to appropriate page
+            router.push(redirectTo);
 
         } catch (err) {
             console.error(err);
-            setError("Terjadi kesalahan koneksi db.");
+            setError("Terjadi kesalahan koneksi.");
         } finally {
             setLoading(false);
         }

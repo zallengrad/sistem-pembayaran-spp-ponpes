@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/lib/supabase";
 import styles from "./user.module.css";
 
 interface PaymentRecord {
@@ -37,54 +36,37 @@ export default function UserPage() {
             }
 
             try {
-                // 1. Fetch Santri Profile
-                const { data: santriData, error: santriError } = await supabase
-                    .from('santri')
-                    .select('id, nis, nama, kelas')
-                    .eq('id', santriId)
-                    .single();
-                
-                if (santriError || !santriData) {
-                    console.error("Santri not found", santriError);
+                // Fetch santri profile and payment data from API
+                const response = await fetch(`/api/pembayaran/santri/${santriId}`);
+                const result = await response.json();
+
+                if (!result.success) {
+                    console.error("Error fetching data", result.error);
                     router.push('/login');
                     return;
                 }
+
+                const { santri: santriData, payments: paymentData } = result.data;
                 setSantri(santriData);
 
-                // 2. Fetch Payments
-                const { data: paymentData, error: paymentError } = await supabase
-                    .from('pembayaran')
-                    .select(`
-                        id,
-                        dibayarkan,
-                        tagihan_batch (
-                            bulan,
-                            tahun,
-                            total
-                        )
-                    `)
-                    .eq('santri_id', santriId);
-
-                if (paymentError) {
-                    console.error("Error fetching payments", paymentError);
-                } else if (paymentData) {
-                    const mappedPayments: PaymentRecord[] = paymentData.map((item: any) => ({
-                        id: item.id,
-                        bulan: item.tagihan_batch.bulan,
-                        tahun: item.tagihan_batch.tahun,
-                        totalTagihan: item.tagihan_batch.total,
-                        dibayarkan: item.dibayarkan
-                    }));
-                    
-                    // Set default filter to current year if exists, else 'all'
-                    const currentYear = new Date().getFullYear();
-                    const hasCurrentYear = mappedPayments.some(p => p.tahun === currentYear);
-                    setFilterTahun(hasCurrentYear ? String(currentYear) : "all");
-                    
-                    setPayments(mappedPayments);
-                }
+                // Map payment data to match expected format
+                const mappedPayments: PaymentRecord[] = paymentData.map((item: any) => ({
+                    id: item.id,
+                    bulan: item.tagihan_batch.bulan,
+                    tahun: item.tagihan_batch.tahun,
+                    totalTagihan: item.tagihan_batch.total,
+                    dibayarkan: item.dibayarkan
+                }));
+                
+                // Set default filter to current year if exists, else 'all'
+                const currentYear = new Date().getFullYear();
+                const hasCurrentYear = mappedPayments.some(p => p.tahun === currentYear);
+                setFilterTahun(hasCurrentYear ? String(currentYear) : "all");
+                
+                setPayments(mappedPayments);
             } catch (err) {
                 console.error(err);
+                router.push('/login');
             } finally {
                 setLoading(false);
             }
